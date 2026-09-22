@@ -3,70 +3,72 @@ const caixaPerguntas = document.querySelector(".caixa-perguntas");
 const caixaAlternativas = document.querySelector(".caixa-alternativas");
 const caixaResultado = document.querySelector(".caixa-resultado");
 const textoResultado = document.querySelector(".texto-resultado");
+const progressoBarra = document.getElementById("progresso");
+const btnReiniciar = document.getElementById("btn-reiniciar");
 
 const perguntas = [
     {
-        enunciado: "Quando você começa um novo projeto de programação, qual é a sua abordagem inicial?",
+        enunciado: "Ao iniciar a construção de um novo software, como você prefere agir?",
         alternativas: [
             {
-                texto: "Gosto de planejar detalhadamente antes de começar a codificar.",
-                afirmacao: "<b>Organização</b> é uma característica forte sua, valorizando o planejamento detalhado."
+                texto: "Arquitetar todo o projeto, definir estruturas de dados e criar diagramas antes de digitar uma linha.",
+                afirmacao: "Sua mentalidade é fortemente **Estratégica e Analítica**, priorizando a prevenção de erros e a clareza arquitetural."
             },
             {
-                texto: "Prefiro começar a codificar logo e ajustar o plano conforme avanço.",
-                afirmacao: "Você se destaca pela <b>dinamismo</b>, gostando de aprender e ajustar durante o processo."
+                texto: "Criar um protótipo rápido e ir evoluindo o código de forma iterativa à medida que vejo as coisas funcionando.",
+                afirmacao: "Você demonstra um perfil altamente **Prático e Ágil**, com foco em entregas rápidas e adaptação constante."
             }
         ]
     },
     {
-        enunciado: "Como você lida com problemas ou bugs no seu código?",
+        enunciado: "Diante de um bug misterioso que está travando o sistema, qual seu primeiro passo?",
         alternativas: [
             {
-                texto: "Gosto de resolver os problemas sozinho, pesquisando e testando diferentes soluções.",
-                afirmacao: "Independência define sua abordagem para resolver problemas, confiando nas suas <b>habilidades de pesquisa</b>."
+                texto: "Investigar logs, usar o debugger linha por linha e isolar o problema por conta própria.",
+                afirmacao: "Sua autonomia se destaca no **Diagnóstico Técnico**, confiando na sua capacidade de investigação profunda."
             },
             {
-                texto: "Prefiro pedir ajuda a colegas ou em fóruns de programação quando encontro dificuldades.",
-                afirmacao: "Colaboração é essencial para você, apreciando a <b>troca de conhecimento</b> com outros programadores."
+                texto: "Trocar uma ideia com outro dev ou abrir uma discussão no fórum da equipe para levantar hipóteses.",
+                afirmacao: "Você fortalece a **Cultura Colaborativa**, entendendo que múltiplos pontos de vista aceleram a solução de problemas complexos."
             }
         ]
     },
     {
-        enunciado: "Qual é a sua preferência em relação à estética versus funcionalidade em um projeto?",
+        enunciado: "Em relação ao design e à experiência do usuário (UX), qual sua visão?",
         alternativas: [
             {
-                texto: "Acredito que a funcionalidade é mais importante que a estética.",
-                afirmacao: "<b>Pragmatismo</b> é uma característica sua, priorizando a funcionalidade e a eficiência do código."
+                texto: "Se o código for performático, seguro e funcional, a interface é um detalhe secundário.",
+                afirmacao: "Sua atenção se volta para a **Engenharia de Base e Performance**, onde a estabilidade do sistema vem sempre em primeiro lugar."
             },
             {
-                texto: "Valorizo muito a estética e gosto de criar interfaces visualmente atraentes.",
-                afirmacao: "<b>Detalhista</b>, você dá muita importância à aparência e à experiência do usuário."
+                texto: "Uma interface bonita, fluida e intuitiva é tão fundamental quanto a estabilidade do código.",
+                afirmacao: "Sua visão é focada em **Experiência do Usuário (UI/UX)**, valorizando o impacto visual e a facilidade de uso do software."
             }
         ]
     },
     {
-        enunciado: "Qual é a sua postura em relação ao aprendizado de novas tecnologias?",
+        enunciado: "Qual sua postura ao se deparar com novas ferramentas ou frameworks que surgem no mercado?",
         alternativas: [
             {
-                texto: "Prefiro me aprofundar nas tecnologias que já conheço bem antes de explorar novas.",
-                afirmacao: "<b>Foco</b> é seu ponto forte, preferindo dominar suas ferramentas atuais."
+                texto: "Prefiro dominar com maestria a stack que já utilizo antes de investir tempo em novidades.",
+                afirmacao: "Você possui **Especialização Consolidada**, buscando profundidade técnica nas ferramentas que já domina."
             },
             {
-                texto: "Gosto de experimentar e aprender novas tecnologias constantemente.",
-                afirmacao: "<b>Curiosidade</b> é uma marca sua, sempre em busca de novas ferramentas e técnicas."
+                texto: "Adoro testar novas bibliotecas e linguagens em pequenos projetos para entender seu potencial.",
+                afirmacao: "Seu motor é a **Inovação Contínua**, mantendo sua curiosidade acesa em relação às tendências tecnológicas."
             }
         ]
     },
     {
-        enunciado: "Como você prefere trabalhar em um projeto?",
+        enunciado: "Qual ambiente de trabalho te traz melhores resultados?",
         alternativas: [
             {
-                texto: "Prefiro trabalhar sozinho, tendo total controle sobre o projeto.",
-                afirmacao: "<b>Independência</b> é uma preferência sua, gostando de ter controle total sobre seus projetos."
+                texto: "Um ambiente onde posso focar 100% nas minhas tarefas com autonomia e controle total da solução.",
+                afirmacao: "Sua força está na **Execução Autônoma**, entregando alto rendimento com independência."
             },
             {
-                texto: "Gosto de trabalhar em equipe, colaborando e compartilhando responsabilidades.",
-                afirmacao: "<b>Trabalho em equipe</b> é algo que você valoriza, apreciando a colaboração e a partilha de responsabilidades."
+                texto: "Um ambiente colaborativo com constantes trocas, pair programming e decisões tomadas em conjunto.",
+                afirmacao: "Sua sinergia brilha na **Sincronia de Equipe**, multiplicando o potencial do time por meio da cooperação."
             }
         ]
     }
@@ -76,37 +78,51 @@ let atual = 0;
 let perguntaAtual;
 let historiaFinal = "";
 
-function mostraPergunta(){
-    if(atual >= perguntas.length){
+function mostraPergunta() {
+    if (atual >= perguntas.length) {
         mostraResultado();
         return;
     }
+    
+    // Atualiza a barra de progresso
+    const porcentagem = (atual / perguntas.length) * 100;
+    progressoBarra.style.width = `${porcentagem}%`;
+
     perguntaAtual = perguntas[atual];
     caixaPerguntas.textContent = perguntaAtual.enunciado;
     caixaAlternativas.textContent = "";
     mostraAlternativas();
 }
 
-function mostraAlternativas(){
-    for(const alternativa of perguntaAtual.alternativas){
+function mostraAlternativas() {
+    for (const alternativa of perguntaAtual.alternativas) {
         const botaoAlternativas = document.createElement("button");
         botaoAlternativas.textContent = alternativa.texto;
         botaoAlternativas.addEventListener("click", () => respostaSelecionada(alternativa));
-        caixaAlternativas.appendChild(botaoAlternativas)
+        caixaAlternativas.appendChild(botaoAlternativas);
     }
 }
 
-function respostaSelecionada(opcaoSelecionada){
+function respostaSelecionada(opcaoSelecionada) {
     const afirmacoes = opcaoSelecionada.afirmacao;
-    historiaFinal += afirmacoes + " ";
+    historiaFinal += afirmacoes + "<br><br>";
     atual++;
     mostraPergunta();
 }
 
-function mostraResultado(){
-    caixaPerguntas.textContent = "Olha só o que podemos afirmar sobre você...";
+function mostraResultado() {
+    progressoBarra.style.width = `100%`;
+    caixaPerguntas.textContent = "Mapeamento Concluído! Confira seu perfil:";
     textoResultado.innerHTML = historiaFinal;
     caixaAlternativas.innerHTML = "";
+    btnReiniciar.style.display = "block";
 }
 
-mostraPergunta(); 
+btnReiniciar.addEventListener("click", () => {
+    atual = 0;
+    historiaFinal = "";
+    btnReiniciar.style.display = "none";
+    mostraPergunta();
+});
+
+mostraPergunta();
